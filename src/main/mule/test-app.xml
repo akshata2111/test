@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:docusign="http://www.mulesoft.org/schema/mule/docusign"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/docusign http://www.mulesoft.org/schema/mule/docusign/current/mule-docusign.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="ecdd1fab-fdb7-4a99-b37a-61a3b51d397e" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<docusign:config name="Docusign_Connector_Config" doc:name="Docusign Connector Config" doc:id="213a3e30-61be-4187-b79f-08e46eca8a30" >
+		<docusign:oauth-connection baseUri="https://demo.docusign.net/restapi">
+			<docusign:oauth-authorization-code consumerKey="6ce9c748-0a7d-4afe-aeab-78c460a9fd33" consumerSecret="b9f1ce0c-fbc3-4e3e-b510-fb4264e51864"/>
+			<docusign:oauth-callback-config listenerConfig="HTTP_Listener_config" callbackPath="/callback" authorizePath="/authorize" externalCallbackUrl="http://localhost:8081/callback"/>
+			<docusign:oauth-store-config objectStore="Object_store" />
+		</docusign:oauth-connection>
+	</docusign:config>
+	<os:object-store name="Object_store" doc:name="Object store" doc:id="6ed354e2-5391-4b64-9ca2-6b81a92ae7ad" />
+	<flow name="test-appFlow" doc:id="e95b5e64-417c-48f0-9e83-245ce4525f9c" >
+		<http:listener doc:name="Listener" doc:id="228857ba-ff8a-476c-af97-35aeb0c3d3a3" config-ref="HTTP_Listener_config" path="/test"/>
+		<ee:transform doc:name="Transform Message" doc:id="ff6acbac-3218-4acb-9f5f-5d831cd6725c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[ output application/json
+---
+{
+	"emailSubject": "Please Test Template",
+	"emailBlurb": "The testing Mulesoft Template",
+	"status": "sent",
+	"compositeTemplates": [{
+		"compositeTemplateId": "1",
+		"inlineTemplates": [{
+			"sequence": "2",
+			"recipients": {
+				"signers": [{
+					"email": "atul17.sharma@nttdata.com",
+					"name": "Atul Sharma",
+					"recipientId": "65d8e213-1b49-4ad3-a256-e272b7c042ea",
+					"roleName": "Signer1",
+					"tabs": {
+						"textTabs": [{
+							"tabLabel": "NAME OF INDIVIDUAL_F000000241",
+							"value": "Atul",
+							"recipientId": "65d8e213-1b49-4ad3-a256-e272b7c042ea",
+						},
+								  {
+							"tabLabel": "COUNTRY OF CITIZENSHIP_F000000241",
+							"value": "INDIA",
+							"recipientId": "65d8e213-1b49-4ad3-a256-e272b7c042ea",
+						}]
+					}
+				}]
+			}
+		}],
+		"serverTemplates": [{
+			"sequence": "1",
+			"templateId": "7fca1c4f-e66b-4b34-b75d-0930e973bcca"
+		}]
+	}]
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<!-- [STUDIO:"Envelopes Post Envelopes"]<docusign:create-v21-accounts-envelopes-by-account-id doc:name="Envelopes Post Envelopes" doc:id="1ff050ef-ed0c-4023-a462-e66fe4c8bdfc" config-ref="Docusign_Connector_Config" accountId="7fb7905f-27a5-4fe1-b469-b8355d7bed52"/> [STUDIO] -->
+		<logger level="INFO" doc:name="Logger" doc:id="377bfa29-caac-4ca8-b3f8-a232ac21aa8f" />
+	</flow>
+</mule>
