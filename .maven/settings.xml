@@ -4,13 +4,12 @@
   <pluginGroups>
     <pluginGroup>org.mule.tools</pluginGroup>
   </pluginGroups>
-
   <servers>
     <server>
-      <id>Repository</id>
-      <username>~~~Client~~~</username>
-      <password>${client.id}~?~${client.secret}</password>
+        <id>Repository</id>
+        <username>${env.CONNECTED_APP_CLIENT_ID}</username>
+        <password>${env.CONNECTED_APP_CLIENT_SECRET}</password>
     </server>
-  </servers>
+</servers>
 
 </settings>
