@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <settings>
-
   <pluginGroups>
     <pluginGroup>org.mule.tools</pluginGroup>
   </pluginGroups>
@@ -10,6 +9,10 @@
         <username>${env.CONNECTED_APP_CLIENT_ID}</username>
         <password>${env.CONNECTED_APP_CLIENT_SECRET}</password>
     </server>
-</servers>
-
+    <server>
+        <id>anypoint-exchange</id>
+        <username>${env.CONNECTED_APP_CLIENT_ID}</username>
+        <password>${env.CONNECTED_APP_CLIENT_SECRET}</password>
+    </server>
+  </servers>
 </settings>
